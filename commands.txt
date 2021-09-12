@@ -1,0 +1,34 @@
+Global Jflex: jflex Java.flex
+Local Jflex jar file: java -jar jflex-full-1.8.2.jar Java.flex
+
+java -jar java-cup-11b.jar java12.cup
+
+In generated "Scanner.java" file edit as follow:
+
+import java_cup.runtime.*;
+import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
+
+@SuppressWarnings("FallThrough")
+public class Scanner extends sym implements java_cup.runtime.Scanner {
+  public List<Integer> loopContainer = new ArrayList<Integer>();
+  
+  ...
+  
+case 78: {
+   loopContainer.add(zzCurrentPos - loopContainer.get(loopContainer.size() - 1));
+   return symbol(END);
+}
+
+case 105: {
+   loopContainer.add(zzCurrentPos + 5);
+   return symbol(BEGIN);
+}
+
+
+Then:
+javac -cp .;java-cup-11b-runtime.jar Scanner.java sym.java JavaSymbol.java parser.java TestLexer.java UnicodeEscapes.java JavaParser.java
+
+java -cp .;java-cup-11b-runtime.jar Scanner sample.in
+java -cp .;java-cup-11b-runtime.jar JavaParser sample.in
